@@ -125,7 +125,7 @@ CONFIG_FILE = "api_configs.json"
 # ==================== 员工配置 ====================
 # 默认员工名称
 DEFAULT_EMPLOYEE_NAMES = ['小明', '小红', '阿强', '小丽', '大伟', '晓晓']
-DEFAULT_POSITIONS = ['规划师待定', '规划师待定', '规划师待定', '规划师待定', '规划师待定', '规划师待定']
+DEFAULT_POSITIONS = ['等待分配', '等待分配', '等待分配', '等待分配', '等待分配', '等待分配']
 
 # 预配置API的员工ID
 PRECONFIGURED_EMPLOYEE_IDS = [0, 1]
