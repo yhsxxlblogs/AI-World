@@ -760,7 +760,7 @@ class Game:
                     employee.x = target_x
                     employee.y = target_y
                     employee.final_work_pos = (target_x, target_y)
-                    employee.substate = AIEmployee.SUBSTATE_WORKING
+                    employee.substate = AIEmployee.SUBSTATE_SITTING
                     employee.is_sitting = True
     
     def _toggle_all_employees(self):
