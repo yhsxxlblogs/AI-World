@@ -755,7 +755,13 @@ class Game:
                     employee.final_work_pos = (target_x, target_y)
                     print(f"[派遣] {employee.name} (ID:{employee.id}) -> 工位{i+1}")
                 else:
-                    print(f"[派遣] 警告: {employee.name} 找不到路径")
+                    # 找不到路径时，直接传送到目标位置
+                    print(f"[派遣] {employee.name} 直接传送到工位{i+1}")
+                    employee.x = target_x
+                    employee.y = target_y
+                    employee.final_work_pos = (target_x, target_y)
+                    employee.substate = AIEmployee.SUBSTATE_WORKING
+                    employee.is_sitting = True
     
     def _toggle_all_employees(self):
         """切换所有员工的状态"""
