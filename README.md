@@ -1,253 +1,259 @@
-# AI World - AI公司模拟器
+# AI World
 
 <p align="center">
   <img src="https://img.shields.io/badge/Python-3.10+-blue.svg" alt="Python 3.10+">
   <img src="https://img.shields.io/badge/Pygame-2.6.1-green.svg" alt="Pygame 2.6.1">
-  <img src="https://img.shields.io/badge/OpenAI-SDK-orange.svg" alt="OpenAI SDK">
-  <img src="https://img.shields.io/badge/阿里云百炼-23个模型-red.svg" alt="阿里云百炼">
+  <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="MIT License">
 </p>
 
 <p align="center">
-  <b>扮演公司老板，指挥AI员工协作完成项目</b>
+  <b>企业级多智能体协作模拟系统</b>
 </p>
 
 ---
 
-## 🎮 项目简介
+## 项目概述
 
-AI World 是一款2D俯视视角的剧情类游戏，玩家扮演一家AI公司的老板，通过AI规划师为员工分配任务，员工使用真实的AI大模型并行工作，最终自动整合成果并生成格式规范的Markdown文档。
+AI World 是一款基于多智能体架构的协作模拟系统，采用游戏化界面展示分布式任务处理流程。系统通过可视化方式呈现多模型协同工作机制，适用于团队协作教学、分布式系统演示及人工智能应用研究。
 
-### 核心特色
+### 核心特性
 
-- 🤖 **6名AI员工** - 每位员工配置不同的大模型（通用/视觉/代码/推理/翻译）
-- 🎯 **智能规划** - AI规划师自动分析需求并生成分工方案
-- ⚡ **并行执行** - 多名员工同时工作，实时显示进度
-- 📄 **自动整合** - 严格处理AI输出，格式化为标准Markdown
-- 🖼️ **多模态支持** - 支持上传图片和文档作为参考
-- 🔄 **模型自动切换** - 额度用尽时自动降级到备用模型
+- **多智能体架构**: 6个独立智能体，各自配置专用大语言模型
+- **任务编排系统**: 基于规划器的自动化任务分解与分配
+- **并行执行引擎**: 支持多任务并发处理，实时状态监控
+- **结果整合模块**: 自动化输出格式化与文档生成
+- **多模态输入**: 支持文本、图像及文档作为任务输入
 
 ---
 
-## 🚀 快速开始
+## 系统架构
+
+### 技术栈
+
+| 组件 | 技术选型 |
+|------|----------|
+| 运行时环境 | Python 3.10+ |
+| 图形界面 | Pygame 2.6.1 |
+| 模型接口 | OpenAI Compatible API |
+| 主要模型 | 阿里云百炼 Qwen 系列 |
+| 备用模型 | 智谱 GLM 系列 |
+
+### 智能体配置
+
+系统包含 6 个专用智能体，针对不同任务类型优化：
+
+| 智能体 ID | 角色定位 | 模型配置 | 功能领域 |
+|-----------|----------|----------|----------|
+| 0 | 技术专员 | qwen-max | 通用复杂任务 |
+| 1 | 人事专员 | qwen3.6-plus | 多模态处理 |
+| 2 | 市场专员 | qwen3-vl-235b | 视觉理解分析 |
+| 3 | 财务专员 | qwen-coder-turbo | 代码生成与审查 |
+| 4 | 运营专员 | qvq-max | 逻辑推理与决策 |
+| 5 | 行政专员 | qwen-plus | 通用均衡任务 |
+
+### 模型管理策略
+
+- **主模型池**: 23 个百炼平台模型，覆盖通用、视觉、代码、数学、推理等场景
+- **降级机制**: 主模型额度耗尽时自动切换至备用模型
+- **负载均衡**: 根据任务类型智能分配最优模型
+
+---
+
+## 安装与部署
 
 ### 环境要求
 
-- Python 3.10 或更高版本
-- Windows 10/11
+- 操作系统: Windows 10/11
+- Python 版本: 3.10 或更高
+- 内存: 4GB 以上
+- 网络: 需连接互联网以调用模型 API
 
-### 安装依赖
+### 安装步骤
 
 ```bash
+# 克隆仓库
+git clone https://github.com/yhsxxlblogs/AI-World.git
+cd AI-World
+
+# 安装依赖
 pip install -r requirements.txt
-```
 
-### 启动游戏
-
-```bash
+# 启动系统
 py main.py
 ```
 
 ---
 
-## 🎮 游戏操作
+## 使用指南
 
-| 按键 | 功能 |
-|------|------|
-| `WASD` | 控制老板移动 |
-| `E` | 与附近员工对话 |
-| `P` | 打开流程编辑器 |
-| `T` | 切换工作流面板 |
-| `L` | 切换语言(中/英) |
-| `SPACE` | 发布工作号令 |
-| `ESC` | 退出游戏 |
-| `鼠标左键` | 点击员工查看详情 |
-| `鼠标拖动` | 拖动工作流面板 |
-| `鼠标滚轮` | 滚动任务列表 |
+### 基本操作
 
----
+| 操作 | 按键 | 说明 |
+|------|------|------|
+| 移动 | WASD | 控制角色在场景中移动 |
+| 交互 | E | 与智能体进行对话 |
+| 任务编排 | P | 打开任务规划界面 |
+| 监控面板 | T | 切换执行状态面板 |
+| 语言切换 | L | 中英文界面切换 |
+| 任务启动 | SPACE | 发布执行指令 |
+| 退出 | ESC | 关闭系统 |
 
-## 🏢 游戏场景
+### 工作流程
 
-### 工作区
-- 6个工位，配备桌椅和电脑
-- 员工在此执行AI任务
-- 实时显示工作进度
+1. **任务输入**: 在规划界面输入任务需求，可附加参考文件
+2. **智能规划**: 系统自动分析需求并生成分工方案
+3. **技能生成**: 为每个智能体生成专属执行策略文档
+4. **任务分发**: 智能体自动前往工作区域就位
+5. **并行执行**: 多智能体同时处理各自子任务
+6. **结果整合**: 系统自动合并输出并格式化为标准文档
 
-### 休息区
-- 沙发、绿植、饮水机
-- 员工休息和等待区域
-- 随机走动和坐下休息
-
-### 老板角色
-- 玩家控制的角色
-- 可移动并与员工交互
-- 发布工作号令
-
----
-
-## 👥 AI员工配置
-
-| 员工 | 角色 | AI模型 | 平台 | 专长 |
-|------|------|--------|------|------|
-| 小明 | 技术专员 | qwen-max | 阿里云百炼 | 最强通用 |
-| 小红 | 人事专员 | qwen3.6-plus | 阿里云百炼 | 多模态均衡 |
-| 阿强 | 市场专员 | qwen3-vl-235b-thinking | 阿里云百炼 | 视觉理解 |
-| 小丽 | 财务专员 | qwen-coder-turbo-0919 | 阿里云百炼 | 代码生成 |
-| 大伟 | 运营专员 | qvq-max-2025-03-25 | 阿里云百炼 | 逻辑推理 |
-| 晓晓 | 行政专员 | qwen-plus | 阿里云百炼 | 通用均衡 |
-
-**备用模型**: 智谱GLM-5/GLM-4（当百炼额度用尽时自动切换）
-
----
-
-## 🔄 工作流程
+### 输出目录结构
 
 ```
-1. 输入项目需求 + 上传参考文件/图片
-        ↓
-2. AI规划师分析并生成分工方案
-        ↓
-3. 为每位员工生成专属技能文件(skill.md)
-        ↓
-4. 按空格发布号令，员工前往工位
-        ↓
-5. 并行执行AI任务（实时显示进度）
-        ↓
-6. 严格处理每位员工的AI输出
-        ↓
-7. 缝合所有结果
-        ↓
-8. 规划师整合并格式化为Markdown
-        ↓
-9. 生成MERGED_RESULT.md
-        ↓
-10. 员工返回休息区
+results/
+└── [项目名称]_[时间戳]/
+    ├── README.md              # 执行报告
+    ├── MERGED_RESULT.md       # 整合成果文档
+    ├── project_meta.json      # 项目元数据
+    └── [编号]_[角色].md        # 各智能体独立输出
 ```
 
 ---
 
-## 📁 项目结构
+## 系统模块
+
+### 核心模块 (core/)
+
+- **ai_employee.py**: 智能体状态机与行为控制
+- **boss.py**: 用户角色控制与交互
+- **pathfinding.py**: A* 寻路算法实现
+- **constants.py**: 系统常量集中管理
+
+### 智能体系统 (ai_systems/)
+
+- **agent_planner.py**: 任务规划与分解
+- **agent_planner_v2.py**: 增强版规划器，支持多模态输入
+- **employee_ai_worker.py**: 智能体执行引擎
+- **bailian_models.py**: 模型配置与优先级管理
+- **model_manager.py**: 模型调度与降级处理
+
+### 用户界面 (ui/)
+
+- **workflow_editor.py**: 任务编排界面
+- **workflow_system.py**: 执行状态监控
+- **loading_screen.py**: 系统启动与配置管理
+- **planner_chat.py**: 规划交互界面
+
+### 工具模块 (utils/)
+
+- **result_manager.py**: 成果管理与文档生成
+- **ai_output_processor.py**: 输出格式化与质量处理
+- **content_formatter.py**: 内容类型识别与格式化
+
+---
+
+## 配置说明
+
+### API 配置
+
+系统预配置以下模型服务：
+
+**主服务 - 阿里云百炼**
+- 接入点: `https://dashscope.aliyuncs.com/compatible-mode/v1`
+- 免费额度: 每模型 100 万 Token（开通后 90 天内有效）
+- 认证方式: API Key
+
+**备用服务 - 智谱 AI**
+- 接入点: `https://open.bigmodel.cn/api/paas/v4`
+- 默认模型: glm-4
+- 触发条件: 主服务额度耗尽时自动切换
+
+### 自定义配置
+
+可通过环境变量覆盖默认配置：
+
+```powershell
+$env:DASHSCOPE_API_KEY="your-api-key"
+$env:ZHIPU_API_KEY="your-api-key"
+```
+
+---
+
+## 项目结构
 
 ```
 AI-World/
-├── main.py                    # 游戏主入口
-├── requirements.txt           # 依赖列表
-├── README.md                  # 项目说明
-├── PROJECT_STATUS.md          # 项目状态文档
+├── main.py                    # 系统入口
+├── requirements.txt           # 依赖清单
+├── README.md                  # 项目文档
+├── PROJECT_STATUS.md          # 开发状态文档
 │
 ├── core/                      # 核心模块
-│   ├── config.py              # 游戏配置
+│   ├── config.py              # 基础配置
 │   ├── constants.py           # 常量定义
-│   ├── ai_employee.py         # 员工类
-│   ├── boss.py                # 老板角色
-│   ├── pathfinding.py         # A*寻路系统
+│   ├── ai_employee.py         # 智能体实现
+│   ├── boss.py                # 用户角色
+│   ├── pathfinding.py         # 寻路系统
 │   └── ...
 │
-├── ai_systems/                # AI系统模块
-│   ├── agent_planner.py       # AI规划师
-│   ├── agent_planner_v2.py    # 增强版规划师
-│   ├── employee_ai_worker.py  # 员工AI工作器
-│   ├── bailian_models.py      # 百炼模型配置
-│   ├── model_manager.py       # 模型管理器
+├── ai_systems/                # 智能体系统
+│   ├── agent_planner.py       # 任务规划
+│   ├── agent_planner_v2.py    # 增强规划器
+│   ├── bailian_models.py      # 模型配置
+│   ├── model_manager.py       # 模型管理
 │   └── ...
 │
-├── ui/                        # UI模块
-│   ├── loading_screen.py      # 启动页
-│   ├── workflow_editor.py     # 流程编辑器
-│   ├── workflow_system.py     # 工作流系统
+├── ui/                        # 用户界面
+│   ├── workflow_editor.py     # 任务编排
+│   ├── workflow_system.py     # 状态监控
 │   └── ...
 │
 ├── utils/                     # 工具模块
-│   ├── result_manager.py      # 成果管理器
-│   ├── ai_output_processor.py # AI输出处理器
+│   ├── result_manager.py      # 成果管理
+│   ├── ai_output_processor.py # 输出处理
 │   └── ...
 │
-├── skill/                     # 技能文件目录
-│   └── skill*.md
-│
-└── results/                   # 成果输出目录
-    └── [项目文件夹]/
-        ├── MERGED_RESULT.md
-        ├── README.md
-        └── ...
+├── skill/                     # 策略文档
+├── results/                   # 输出目录
+└── docs/                      # 技术文档
 ```
 
 ---
 
-## 🔧 技术栈
+## 开发状态
 
-- **语言**: Python 3.10+
-- **游戏框架**: Pygame 2.6.1
-- **AI SDK**: OpenAI SDK（兼容百炼和智谱）
-- **主要API**: 阿里云百炼 (Qwen系列) + 智谱AI (GLM系列)
+### 已完成功能
 
----
+- [x] 多智能体并行执行框架
+- [x] 基于规划器的任务编排系统
+- [x] 23 个模型配置与自动调度
+- [x] 多模态输入支持（文本、图像、文档）
+- [x] 输出格式化与质量处理流水线
+- [x] 实时状态监控面板
+- [x] 成果自动整合与文档生成
 
-## 🔑 API配置
+### 开发计划
 
-### 阿里云百炼（默认）
-
-游戏已预配置API，开箱即用：
-- API URL: `https://dashscope.aliyuncs.com/compatible-mode/v1`
-- 免费额度: 每个模型100万Token（开通后90天内）
-
-### 智谱GLM（备用）
-
-当百炼额度用尽时自动切换：
-- API URL: `https://open.bigmodel.cn/api/paas/v4`
-- 默认模型: glm-4
-
-### 自定义API密钥（可选）
-
-如需使用自己的API密钥，可设置环境变量：
-
-```powershell
-# PowerShell
-$env:DASHSCOPE_API_KEY="your-key"
-$env:ZHIPU_API_KEY="your-key"
-```
+- [ ] 可视化结果预览
+- [ ] 历史项目回溯
+- [ ] 执行性能分析
+- [ ] 自定义模型接入
 
 ---
 
-## 📸 截图
-
-*游戏截图待添加*
-
----
-
-## 📝 更新日志
-
-### v2.0.0 (2026-04-10)
-- ✅ 重构项目结构，文件按功能分散到二级目录
-- ✅ 集成阿里云百炼平台（23个免费大模型）
-- ✅ 6名员工各配置最优AI模型
-- ✅ 新增AI输出处理器（严格格式化）
-- ✅ 新增结果整合器（自动缝合+规划师整理）
-- ✅ 模型自动切换（额度用尽时降级）
-- ✅ 增强版规划师V2（支持文件上传）
-
----
-
-## 🤝 贡献
-
-欢迎提交Issue和Pull Request！
-
----
-
-## 📄 许可证
+## 许可证
 
 MIT License
 
 ---
 
-## 🙏 致谢
+## 联系方式
 
-- [阿里云百炼](https://bailian.aliyun.com/) - 提供大模型API
-- [智谱AI](https://open.bigmodel.cn/) - 提供备用模型API
-- [Pygame](https://www.pygame.org/) - 游戏开发框架
+- 项目主页: https://github.com/yhsxxlblogs/AI-World
+- 问题反馈: https://github.com/yhsxxlblogs/AI-World/issues
 
 ---
 
 <p align="center">
-  Made with ❤️ by AI World Team
+  AI World Team
 </p>
