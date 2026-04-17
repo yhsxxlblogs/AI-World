@@ -96,7 +96,7 @@ class EmployeePrompts:
 
 示例（错误）：
 ```json
-{"market_size": "100亿"}
+{{"market_size": "100亿"}}
 ```
 
 [AIWORLD_OUTPUT_END]
