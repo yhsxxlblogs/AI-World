@@ -1,0 +1,13 @@
+# AI World - AI公司模拟器
+# Python 3.10+ 依赖列表
+
+# 核心依赖
+pygame>=2.6.0
+openai>=1.0.0
+
+# 可选依赖（用于增强功能）
+# aider-chat>=0.12.0  # AI辅助编程工具
+# psutil>=5.9.0       # 系统资源监控（用于显示内存使用）
+
+# 安装命令:
+# pip install -r requirements.txt

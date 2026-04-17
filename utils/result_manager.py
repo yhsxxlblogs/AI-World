@@ -1,0 +1,248 @@
+# 工作结果管理器 - 管理任务结果和文件输出
+import os
+import re
+import json
+import time
+from datetime import datetime
+from typing import Dict, List, Optional
+from utils.content_formatter import ContentFormatter
+from utils.ai_output_processor import AIOutputProcessor, ResultConsolidator
+
+class ResultManager:
+    """管理工作结果和文件输出"""
+    
+    def __init__(self, results_dir: str = "results"):
+        self.results_dir = results_dir
+        self._ensure_results_dir()
+        
+        # 当前项目结果
+        self.current_project_results = {}
+        self.task_outputs = {}  # 任务ID -> 输出内容
+        
+    def _ensure_results_dir(self):
+        """确保结果目录存在"""
+        if not os.path.exists(self.results_dir):
+            os.makedirs(self.results_dir)
+            print(f"[结果管理] 创建结果目录: {self.results_dir}")
+    
+    def start_project(self, project_name: str, company_name: str):
+        """开始新项目"""
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        self.current_project_dir = os.path.join(
+            self.results_dir, 
+            f"{company_name}_{project_name}_{timestamp}"
+        )
+        os.makedirs(self.current_project_dir, exist_ok=True)
+        
+        self.current_project_results = {
+            'project_name': project_name,
+            'company_name': company_name,
+            'start_time': time.time(),
+            'tasks': [],
+            'workflow': []
+        }
+        
+        print(f"[结果管理] 项目目录: {self.current_project_dir}")
+    
+    def save_task_result(self, task_id: str, employee_name: str, 
+                        role: str, content: str, mode: str):
+        """保存任务结果（带格式整理）"""
+        # 构建文件名
+        safe_role = "".join(c for c in role if c.isalnum() or c in (' ', '_')).rstrip()
+        safe_role = safe_role.replace(' ', '_')
+        # task_id可能是字符串，转换为整数来格式化
+        try:
+            task_id_num = int(task_id)
+            filename = f"{task_id_num:03d}_{safe_role}.md"
+        except (ValueError, TypeError):
+            filename = f"{task_id}_{safe_role}.md"
+        filepath = os.path.join(self.current_project_dir, filename)
+        
+        # 格式化内容
+        print(f"[结果管理] 正在整理 {employee_name} 的成果格式...")
+        formatted_content = ContentFormatter.format_content(content)
+        
+        # 提取标题
+        title = ContentFormatter.extract_title(content)
+        
+        # 构建Markdown内容（使用格式化后的内容）
+        md_content = f"""# {role} 工作成果
+
+**任务ID**: {task_id}  
+**执行人**: {employee_name}  
+**职能**: {role}  
+**工作模式**: {mode}  
+**完成时间**: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
+
+---
+
+## 作品标题
+{title}
+
+## 工作内容
+
+{formatted_content}
+
+---
+
+*由AI员工自动生成并格式化*
+"""
+        
+        # 保存文件
+        with open(filepath, 'w', encoding='utf-8') as f:
+            f.write(md_content)
+        
+        # 记录到项目结果（保存格式化后的内容）
+        self.current_project_results['tasks'].append({
+            'task_id': task_id,
+            'employee': employee_name,
+            'role': role,
+            'mode': mode,
+            'content': formatted_content,  # 使用格式化后的内容
+            'title': title,
+            'file': filename
+        })
+        
+        self.task_outputs[task_id] = content
+        
+        print(f"[结果管理] 保存成果: {filename}")
+        return filepath
+    
+    def save_workflow_step(self, from_employee: str, to_employee: str, 
+                          task_description: str, handoff_data: str):
+        """记录工作流步骤（层级递进时）"""
+        self.current_project_results['workflow'].append({
+            'from': from_employee,
+            'to': to_employee,
+            'task': task_description,
+            'data': handoff_data,
+            'time': time.time()
+        })
+    
+    def generate_final_report(self) -> str:
+        """生成最终报告（带格式整理）"""
+        if not self.current_project_results.get('tasks'):
+            return ""
+        
+        self.current_project_results['end_time'] = time.time()
+        duration = self.current_project_results['end_time'] - self.current_project_results['start_time']
+        
+        # 构建报告
+        report = f"""# 项目执行报告
+
+## 项目信息
+- **项目名称**: {self.current_project_results['project_name']}
+- **公司名称**: {self.current_project_results['company_name']}
+- **开始时间**: {datetime.fromtimestamp(self.current_project_results['start_time']).strftime("%Y-%m-%d %H:%M:%S")}
+- **完成时间**: {datetime.fromtimestamp(self.current_project_results['end_time']).strftime("%Y-%m-%d %H:%M:%S")}
+- **总耗时**: {duration:.1f}秒
+- **格式整理**: 已自动格式化
+
+## 执行团队
+"""
+        
+        for task in self.current_project_results['tasks']:
+            title = task.get('title', '')
+            title_display = f"《{title}》" if title else ""
+            report += f"- **{task['employee']}** ({task['role']}) {title_display} - {task['mode']}\n"
+        
+        report += "\n## 工作成果\n\n"
+        
+        # 按顺序列出所有成果（使用格式化后的内容预览）
+        for task in self.current_project_results['tasks']:
+            title = task.get('title', '')
+            title_section = f"《{title}》" if title else ""
+            
+            report += f"### {task['role']} {title_section}\n"
+            report += f"**执行人**: {task['employee']}  \n"
+            report += f"**模式**: {task['mode']}  \n"
+            report += f"**文件**: [{task['file']}]({task['file']})\n\n"
+            
+            # 使用格式化后的内容预览
+            content = str(task['content']) if task['content'] else ""
+            # 清理预览内容（移除Markdown标记以便在代码块中显示）
+            preview = content[:500] if len(content) > 500 else content
+            preview = preview.replace('```', '').strip()
+            
+            if preview:
+                report += f"```\n{preview}...\n```\n\n"
+            else:
+                report += "*（无内容预览）*\n\n"
+        
+        # 保存报告
+        report_file = os.path.join(self.current_project_dir, "README.md")
+        with open(report_file, 'w', encoding='utf-8') as f:
+            f.write(report)
+        
+        print(f"[结果管理] 生成报告: README.md")
+        return report_file
+    
+    def merge_all_results(self, use_planner: bool = False, planner_client=None) -> str:
+        """
+        合并所有员工的工作成果为一个完整文档（带格式整理）
+        
+        Args:
+            use_planner: 是否使用规划师进行最终整理
+            planner_client: 规划师客户端（如果使用规划师）
+        """
+        if not self.current_project_results.get('tasks'):
+            print("[结果管理] 错误：没有可合并的结果")
+            return ""
+        
+        print(f"[结果管理] 开始合并 {len(self.current_project_results['tasks'])} 个员工的工作成果...")
+        print(f"[结果管理] 正在严格处理AI输出格式...")
+        
+        # 准备员工结果数据
+        employee_results = []
+        for task in self.current_project_results['tasks']:
+            # 使用AI输出处理器处理每个员工的内容
+            raw_content = task.get('content', '')
+            processed = AIOutputProcessor.process(raw_content)
+            
+            if processed.errors:
+                print(f"[结果管理] 警告: {task['employee']} 的输出有问题: {', '.join(processed.errors)}")
+            
+            employee_results.append({
+                'employee_name': task['employee'],
+                'role': task['role'],
+                'content': processed.cleaned_content
+            })
+        
+        # 使用结果整合器整合所有内容
+        project_goal = self.current_project_results.get('project_name', '')
+        consolidated_content = ResultConsolidator.consolidate(
+            employee_results=employee_results,
+            project_goal=project_goal,
+            use_planner=use_planner,
+            planner_client=planner_client
+        )
+        
+        # 格式化最终文档
+        final_content = ResultConsolidator.format_final_document(
+            content=consolidated_content,
+            project_name=self.current_project_results['project_name'],
+            project_goal=project_goal,
+            employee_count=len(self.current_project_results['tasks'])
+        )
+        
+        # 保存合并文档
+        merged_file = os.path.join(self.current_project_dir, "MERGED_RESULT.md")
+        with open(merged_file, 'w', encoding='utf-8') as f:
+            f.write(final_content)
+        
+        print(f"[结果管理] 合并完成: MERGED_RESULT.md")
+        print(f"[结果管理] 文档路径: {merged_file}")
+        
+        if use_planner:
+            print(f"[结果管理] 已使用规划师进行最终整理")
+        
+        return merged_file
+
+    def get_task_output(self, task_id: str) -> str:
+        """获取任务输出（用于传递给下一个任务）"""
+        return self.task_outputs.get(task_id, "")
+    
+    def clear(self):
+        """清空当前项目"""
+        self.current_project_results = {}
+        self.task_outputs = {}
